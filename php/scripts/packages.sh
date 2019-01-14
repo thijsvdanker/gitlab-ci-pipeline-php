@@ -31,6 +31,7 @@ DEBIAN_FRONTEND=noninteractive
       python-dev \
       rsync \
       sudo \
+      zip \
       unzip \
       zlib1g-dev \
       --no-install-recommends \
