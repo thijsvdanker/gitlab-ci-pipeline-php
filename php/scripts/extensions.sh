@@ -89,13 +89,13 @@ if [[ $PHP_VERSION == "7.2" || $PHP_VERSION == "7.3" ]]; then
     && docker-php-source delete \
 
   pecl channel-update pecl.php.net \
-    && pecl install redis apcu mongodb imagick xdebug \
-    && docker-php-ext-enable redis apcu mongodb imagick xdebug
+    && pecl install redis apcu mongodb imagick \
+    && docker-php-ext-enable redis apcu mongodb imagick
 else
   apt-get update && docker-php-ext-install -j$(nproc) mcrypt
   pecl channel-update pecl.php.net \
-    && pecl install redis mongodb xdebug apcu memcached imagick \
-    && docker-php-ext-enable redis mongodb xdebug apcu memcached imagick
+    && pecl install redis mongodb apcu memcached imagick \
+    && docker-php-ext-enable redis mongodb apcu memcached imagick
 fi
 
 { \
