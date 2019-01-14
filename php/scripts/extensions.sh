@@ -78,7 +78,8 @@ apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yqq $buildDeps
   && docker-php-ext-install -j$(nproc) ldap \
   && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
   && docker-php-ext-install -j$(nproc) imap \
-  && docker-php-source delete
+  && docker-php-source delete \
+  && pear install PHP_CodeSniffer
 
 if [[ $PHP_VERSION == "7.2" || $PHP_VERSION == "7.3" ]]; then
   docker-php-source extract \
