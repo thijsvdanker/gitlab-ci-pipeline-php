@@ -1,27 +1,33 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-apk update && apk upgrade
+set -euf -o pipefail
 
-apk add --no-cache \
-    ca-certificates \
-    curl \
-    file \
+apk update \
+&& apk --no-cache upgrade \
+&& apk --no-cache add \
     g++ \
     gcc \
     git \
     grep \
+    jq \
+    libc-dev \
     make \
+    mariadb-client \
     openssh-client \
+    openssl \
     python \
     rsync \
-    sudo
+    sudo \
+    zip
 
-if [[ $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
-  apk add --no-cache libressl-dev
-else
-  apk add --no-cache openssl-dev
-fi
-
-apk add --no-cache --virtual .build-deps build-base autoconf
-
-rm -rf /usr/share/man
+# persistent / runtime deps
+apk add --no-cache --virtual .persistent-deps \
+		ca-certificates \
+		tar \
+		xz \
+    curl
+apk add --no-cache \
+    autoconf \
+    build-base \
+    file \
+    openssl-dev

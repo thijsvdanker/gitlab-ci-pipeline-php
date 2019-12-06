@@ -9,11 +9,13 @@ command:
   node --version:
     exit-status: 0
     stdout:
-      - v11
+      - "v12"
   yarn --version:
     exit-status: 0
   npm --version:
     exit-status: 0
+    stdout:
+      - "6"
   sudo npm --version:
     exit-status: 0
   composer --version:
@@ -26,13 +28,17 @@ command:
     exit-status: 0
   g++ --version:
     exit-status: 0
+  jq --version:
+    exit-status: 0
   php -m:
     exit-status: 0
     stdout:
+      - amqp
       - apcu
       - bcmath
       - bz2
       - calendar
+      - cassandra
       - exif
       - gd
       - iconv
@@ -55,6 +61,7 @@ command:
       - xml
       - xmlrpc
       - zip
+
 file:
   /usr/local/etc/php/conf.d/zz-conf.ini:
     exists: true

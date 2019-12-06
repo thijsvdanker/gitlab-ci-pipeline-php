@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euf -o pipefail
 
 apk --update --no-cache add \
   bzip2 \
   bzip2-dev \
+  cassandra-cpp-driver \
   curl-dev \
   cyrus-sasl-dev \
   freetype-dev \
@@ -27,33 +28,37 @@ apk --update --no-cache add \
   openldap-dev \
   pcre-dev \
   postgresql-dev \
+  rabbitmq-c \
+  rabbitmq-c-dev \
   readline-dev \
   sqlite-dev \
-  zlib-dev \
-  libzip-dev
+  zlib-dev
+
 
 if [[ $PHP_VERSION == "7.3" ]]; then
-  apk --update --no-cache add libzip-dev
+  apk --update --no-cache add libzip-dev libsodium-dev
+else
+  apk --no-cache add --repository http://dl-cdn.alpinelinux.org/alpine/v3.5/community libzip-dev
 fi
 
 docker-php-ext-configure ldap
-docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap
+docker-php-ext-install -j "$(nproc)" ldap
 docker-php-ext-configure imap --with-kerberos --with-imap-ssl
-docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap
+docker-php-ext-install -j "$(nproc)" imap
 docker-php-ext-configure gd \
         --with-gd \
         --with-freetype-dir=/usr/include \
         --with-jpeg-dir=/usr/include \
         --with-png-dir=/usr/include
-docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd
-docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif xml xmlrpc pcntl bcmath bz2 calendar iconv intl mbstring mysqli opcache pdo_mysql pdo_pgsql pgsql soap zip
+docker-php-ext-install -j "$(nproc)" gd
+docker-php-ext-install -j "$(nproc)" exif xml xmlrpc pcntl bcmath bz2 calendar iconv intl mbstring mysqli opcache pdo_mysql pdo_pgsql pgsql soap zip
 docker-php-source delete
 
 # pecl install pdo_sqlsrv sqlsrv \
 #   && docker-php-ext-enable pdo_sqlsrv sqlsrv
 
 if [[ $PHP_VERSION == "7.3" ]]; then
-  git clone --depth 1 -b 2.7.0beta1 "https://github.com/xdebug/xdebug" \
+  git clone --depth 1 -b 2.8.0 "https://github.com/xdebug/xdebug" \
     && cd xdebug \
     && phpize \
     && ./configure \
@@ -62,7 +67,7 @@ if [[ $PHP_VERSION == "7.3" ]]; then
     && docker-php-ext-enable xdebug
 
 elif [[ $PHP_VERSION == "7.2" ]]; then
-  git clone --depth 1 "https://github.com/xdebug/xdebug" \
+  git clone --depth 1 -b 2.7.2 "https://github.com/xdebug/xdebug" \
     && cd xdebug \
     && phpize \
     && ./configure \
@@ -78,13 +83,16 @@ else
 
     pecl install xdebug \
       && docker-php-ext-enable xdebug
+
+    pecl install amqp \
+      && docker-php-ext-enable amqp
 fi
 
 docker-php-source extract \
-    && curl -L -o /tmp/redis.tar.gz "https://github.com/phpredis/phpredis/archive/4.2.0.tar.gz" \
+    && curl -L -o /tmp/redis.tar.gz "https://github.com/phpredis/phpredis/archive/4.3.0.tar.gz" \
     && tar xfz /tmp/redis.tar.gz \
     && rm -r /tmp/redis.tar.gz \
-    && mv phpredis-4.2.0 /usr/src/php/ext/redis \
+    && mv phpredis-4.3.0 /usr/src/php/ext/redis \
     && docker-php-ext-install redis \
     && docker-php-source delete
 
@@ -95,11 +103,25 @@ docker-php-source extract \
     && apk del .phpize-deps-configure \
     && docker-php-source delete
 
+docker-php-source extract \
+    && apk add --no-cache --virtual .cassandra-deps libressl-dev libuv-dev cassandra-cpp-driver-dev \
+    && curl -L -o /tmp/cassandra.tar.gz "https://github.com/datastax/php-driver/archive/v1.3.2.tar.gz" \
+    && tar xfz /tmp/cassandra.tar.gz \
+    && rm -r /tmp/cassandra.tar.gz \
+    && mv php-driver-1.3.2/ext /usr/src/php/ext/cassandra \
+    && rm -rf php-driver-1.3.2 \
+    && docker-php-ext-install cassandra \
+    && apk del .cassandra-deps \
+    && docker-php-source delete
+
 pecl install imagick \
     && docker-php-ext-enable imagick
 
 pecl install mongodb \
     && docker-php-ext-enable mongodb
+
+pecl install amqp \
+  && docker-php-ext-enable amqp
 
 git clone "https://github.com/php-memcached-dev/php-memcached.git" \
     && cd php-memcached \

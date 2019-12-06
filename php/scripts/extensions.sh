@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euf -o pipefail
 
@@ -22,15 +22,17 @@ xmlrpc \
 zip
 "
 
-if [[ $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
+if [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
   buildDeps=" \
     default-libmysqlclient-dev \
     libbz2-dev \
     libsasl2-dev \
+    pkg-config \
     " \
   runtimeDeps=" \
     imagemagick \
     libfreetype6-dev \
+    libgmp-dev \
     libicu-dev \
     libjpeg-dev \
     libkrb5-dev \
@@ -40,9 +42,12 @@ if [[ $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
     libmemcachedutil2 \
     libpng-dev \
     libpq-dev \
+    librabbitmq-dev \
     libssl-dev \
+    libuv1-dev \
     libxml2-dev \
     libzip-dev \
+    multiarch-support \
     "
 else
   buildDeps=" \
@@ -53,6 +58,7 @@ else
   runtimeDeps=" \
     imagemagick \
     libfreetype6-dev \
+    libgmp-dev \
     libicu-dev \
     libjpeg-dev \
     libkrb5-dev \
@@ -63,13 +69,16 @@ else
     libmemcachedutil2 \
     libpng-dev \
     libpq-dev \
+    librabbitmq-dev \
+    libuv1-dev \
     libxml2-dev \
     mcrypt \
+    multiarch-support \
     "
 fi
 
-apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yqq $buildDeps --no-install-recommends \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -yqq $runtimeDeps --no-install-recommends \
+DEBIAN_FRONTEND=noninteractive apt-get install -yqq $buildDeps \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -yqq $runtimeDeps \
   && rm -rf /var/lib/apt/lists/* \
   && docker-php-ext-install -j$(nproc) $extensions \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
@@ -81,21 +90,45 @@ apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yqq $buildDeps
   && docker-php-source delete \
   && pear install PHP_CodeSniffer
 
-if [[ $PHP_VERSION == "7.2" || $PHP_VERSION == "7.3" ]]; then
+docker-php-source extract \
+    && curl -L -o /tmp/cassandra-cpp-driver.deb "https://downloads.datastax.com/cpp-driver/ubuntu/18.04/cassandra/v2.14.0/cassandra-cpp-driver_2.14.0-1_amd64.deb" \
+    && curl -L -o /tmp/cassandra-cpp-driver-dev.deb "https://downloads.datastax.com/cpp-driver/ubuntu/18.04/cassandra/v2.14.0/cassandra-cpp-driver-dev_2.14.0-1_amd64.deb" \
+    && dpkg -i /tmp/cassandra-cpp-driver.deb /tmp/cassandra-cpp-driver-dev.deb \
+    && rm /tmp/cassandra-cpp-driver.deb /tmp/cassandra-cpp-driver-dev.deb \
+    && curl -L -o /tmp/cassandra.tar.gz "https://github.com/datastax/php-driver/archive/v1.3.2.tar.gz" \
+    && tar xfz /tmp/cassandra.tar.gz \
+    && rm -r /tmp/cassandra.tar.gz \
+    && mv php-driver-1.3.2/ext /usr/src/php/ext/cassandra \
+    && rm -rf php-driver-1.3.2 \
+    && docker-php-ext-install cassandra \
+    && docker-php-source delete
+
+if [[ $PHP_VERSION == "7.2" ]]; then
+  docker-php-source extract \
+    && git clone https://github.com/php-memcached-dev/php-memcached /usr/src/php/ext/memcached/ \
+    && docker-php-ext-install memcached \
+    && docker-php-source delete
+
+  pecl channel-update pecl.php.net \
+    && pecl install amqp redis apcu mongodb imagick xdebug \
+    && docker-php-ext-enable amqp redis apcu mongodb imagick xdebug
+
+elif [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" ]]; then
   docker-php-source extract \
     && git clone https://github.com/php-memcached-dev/php-memcached /usr/src/php/ext/memcached/ \
     && docker-php-ext-install memcached \
     && docker-php-ext-enable memcached \
-    && docker-php-source delete \
+    && docker-php-source delete
 
   pecl channel-update pecl.php.net \
-    && pecl install redis apcu mongodb imagick \
-    && docker-php-ext-enable redis apcu mongodb imagick
+    && pecl install amqp redis apcu mongodb imagick \
+    && docker-php-ext-enable amqp redis apcu mongodb imagick
+
 else
   apt-get update && docker-php-ext-install -j$(nproc) mcrypt
   pecl channel-update pecl.php.net \
-    && pecl install redis mongodb apcu memcached imagick \
-    && docker-php-ext-enable redis mongodb apcu memcached imagick
+    && pecl install amqp redis mongodb apcu memcached imagick \
+    && docker-php-ext-enable amqp redis mongodb apcu memcached imagick
 fi
 
 { \
@@ -111,16 +144,16 @@ fi
 
 { \
     echo 'apc.shm_segments=1'; \
-    echo 'apc.shm_size=512M'; \
+    echo 'apc.shm_size=1024M'; \
     echo 'apc.num_files_hint=7000'; \
     echo 'apc.user_entries_hint=4096'; \
     echo 'apc.ttl=7200'; \
     echo 'apc.user_ttl=7200'; \
     echo 'apc.gc_ttl=3600'; \
-    echo 'apc.max_file_size=50M'; \
+    echo 'apc.max_file_size=100M'; \
     echo 'apc.stat=1'; \
 } > /usr/local/etc/php/conf.d/apcu-recommended.ini
 
-echo "memory_limit=512M" > /usr/local/etc/php/conf.d/zz-conf.ini
+echo "memory_limit=1024M" > /usr/local/etc/php/conf.d/zz-conf.ini
 
-apt-get purge -y --auto-remove $buildDeps
+apt-get purge -yqq --auto-remove $buildDeps

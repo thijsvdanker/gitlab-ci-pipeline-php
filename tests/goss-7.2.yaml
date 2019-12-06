@@ -9,11 +9,13 @@ command:
   node --version:
     exit-status: 0
     stdout:
-      - v11
+      - "v12"
   yarn --version:
     exit-status: 0
   npm --version:
     exit-status: 0
+    stdout:
+      - "6"
   sudo npm --version:
     exit-status: 0
   composer --version:
@@ -26,41 +28,43 @@ command:
     exit-status: 0
   g++ --version:
     exit-status: 0
-  php --version:
+  jq --version:
+    exit-status: 0
+  php -v:
     exit-status: 0
     stdout:
-      - 7
+      - "7.2"
   php -m:
     exit-status: 0
     stdout:
-      - pcntl
+      - amqp
+      - apcu
       - bcmath
       - bz2
       - calendar
-      - iconv
-      - intl
+      - cassandra
+      - exif
       - gd
+      - iconv
+      - imagick
+      - imap
+      - intl
       - ldap
       - mbstring
       - memcached
-      - mcrypt
+      - mongodb
       - mysqli
+      - OPcache
+      - pcntl
       - pdo_mysql
       - pdo_pgsql
       - pgsql
       - redis
       - soap
-      - Zend OPcache
-      - zip
-      - mongodb
-      - apcu
-      - imap
+      - xdebug
       - xml
       - xmlrpc
-      - xdebug
-      - exif
-      - imagick
-
+      - zip
 file:
   /usr/local/etc/php/conf.d/zz-conf.ini:
     exists: true
