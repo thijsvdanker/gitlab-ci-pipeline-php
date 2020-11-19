@@ -31,6 +31,7 @@ export DEBIAN_FRONTEND=noninteractive
       mariadb-client \
       mongo-tools \
       openssh-client \
+      procps \
       python \
       python-dev \
       rsync \
