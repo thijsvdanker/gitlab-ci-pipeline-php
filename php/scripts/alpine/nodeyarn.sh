@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 ln -s /usr/lib/npm/bin/npm-cli.js /usr/bin/npm
 
-npm i -g npm@${NPM_VERSION}
+npm i -g --force npm@${NPM_VERSION}
 
 curl -o- -L https://yarnpkg.com/install.sh | bash
-
-mkdir $HOME/.config
 
 rm -rf /usr/share/man /var/cache/apk/* \
   /root/.npm /root/.node-gyp /root/.gnupg /usr/lib/node_modules/npm/man \

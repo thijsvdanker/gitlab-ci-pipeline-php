@@ -9,7 +9,7 @@ command:
   node --version:
     exit-status: 0
     stdout:
-      - "v12"
+      - "v14"
   yarn --version:
     exit-status: 0
   npm --version:
@@ -20,7 +20,7 @@ command:
     exit-status: 0
   composer --version:
     exit-status: 0
-  python --version:
+  python3 --version:
     exit-status: 0
   make --version:
     exit-status: 0
@@ -41,6 +41,7 @@ command:
       - cassandra
       - exif
       - gd
+      - gmp
       - iconv
       - imagick
       - imap
@@ -61,6 +62,7 @@ command:
       - xml
       - xmlrpc
       - zip
+      - xsl
 
 file:
   /usr/local/etc/php/conf.d/zz-conf.ini:

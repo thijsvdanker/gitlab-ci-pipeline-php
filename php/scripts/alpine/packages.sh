@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-set -euf -o pipefail
+set -euo pipefail
 
-apk update \
-&& apk --no-cache upgrade \
-&& apk --no-cache add \
+apk --update --no-cache add \
     g++ \
     gcc \
     git \
@@ -15,18 +13,20 @@ apk update \
     mariadb-client \
     openssh-client \
     openssl \
-    python \
+    patch \
+    python3 \
     rsync \
     sudo \
     zip
 
 # persistent / runtime deps
-apk add --no-cache --virtual .persistent-deps \
+apk add --update --no-cache --virtual .persistent-deps \
 		ca-certificates \
 		tar \
 		xz \
     curl
-apk add --no-cache \
+
+apk add --update --no-cache \
     autoconf \
     build-base \
     file \

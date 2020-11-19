@@ -1,35 +1,36 @@
 #!/usr/bin/env bash
 
-set -euf -o pipefail
+set -euo pipefail
 
-extensions=" \
-bcmath \
-bz2 \
-calendar \
-exif \
-iconv \
-intl \
-mbstring \
-mysqli \
-opcache \
-pcntl \
-pdo_mysql \
-pdo_pgsql \
-pgsql \
-soap \
-xml \
-xmlrpc \
-zip
-"
+export extensions=" \
+  bcmath \
+  bz2 \
+  calendar \
+  exif \
+  gmp \
+  intl \
+  mysqli \
+  opcache \
+  pcntl \
+  pdo_mysql \
+  pdo_pgsql \
+  pgsql \
+  soap \
+  xmlrpc \
+  xsl \
+  zip
+  "
 
 if [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
-  buildDeps=" \
+
+export buildDeps=" \
     default-libmysqlclient-dev \
     libbz2-dev \
     libsasl2-dev \
     pkg-config \
-    " \
-  runtimeDeps=" \
+    "
+
+export runtimeDeps=" \
     imagemagick \
     libfreetype6-dev \
     libgmp-dev \
@@ -45,17 +46,21 @@ if [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]
     librabbitmq-dev \
     libssl-dev \
     libuv1-dev \
+    libwebp-dev \
     libxml2-dev \
+    libxslt1-dev \
     libzip-dev \
     multiarch-support \
     "
 else
-  buildDeps=" \
+
+export buildDeps=" \
     default-libmysqlclient-dev \
     libbz2-dev \
     libsasl2-dev \
-    " \
-  runtimeDeps=" \
+    "
+
+export runtimeDeps=" \
     imagemagick \
     libfreetype6-dev \
     libgmp-dev \
@@ -71,35 +76,49 @@ else
     libpq-dev \
     librabbitmq-dev \
     libuv1-dev \
+    libwebp-dev \
     libxml2-dev \
     mcrypt \
     multiarch-support \
     "
 fi
 
-DEBIAN_FRONTEND=noninteractive apt-get install -yqq $buildDeps \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -yqq $runtimeDeps \
+apt-get update \
+  && apt-get install -yq $buildDeps \
+  && apt-get install -yq $runtimeDeps \
   && rm -rf /var/lib/apt/lists/* \
-  && docker-php-ext-install -j$(nproc) $extensions \
-  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-  && docker-php-ext-install -j$(nproc) gd \
-  && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-  && docker-php-ext-install -j$(nproc) ldap \
-  && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-  && docker-php-ext-install -j$(nproc) imap \
-  && docker-php-source delete \
-  && pear install PHP_CodeSniffer
+  && docker-php-ext-install -j$(nproc) $extensions
+
+if [[ $PHP_VERSION == "7.4" ]]; then
+    docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && docker-php-ext-install -j$(nproc) ldap \
+    && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install -j$(nproc) imap \
+    && docker-php-source delete
+else
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && docker-php-ext-install -j$(nproc) ldap \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install -j$(nproc) imap \
+    && docker-php-source delete
+fi
 
 docker-php-source extract \
     && curl -L -o /tmp/cassandra-cpp-driver.deb "https://downloads.datastax.com/cpp-driver/ubuntu/18.04/cassandra/v2.14.0/cassandra-cpp-driver_2.14.0-1_amd64.deb" \
     && curl -L -o /tmp/cassandra-cpp-driver-dev.deb "https://downloads.datastax.com/cpp-driver/ubuntu/18.04/cassandra/v2.14.0/cassandra-cpp-driver-dev_2.14.0-1_amd64.deb" \
     && dpkg -i /tmp/cassandra-cpp-driver.deb /tmp/cassandra-cpp-driver-dev.deb \
     && rm /tmp/cassandra-cpp-driver.deb /tmp/cassandra-cpp-driver-dev.deb \
-    && curl -L -o /tmp/cassandra.tar.gz "https://github.com/datastax/php-driver/archive/v1.3.2.tar.gz" \
-    && tar xfz /tmp/cassandra.tar.gz \
+    && curl -L -o /tmp/cassandra.tar.gz "https://github.com/datastax/php-driver/archive/24d85d9f1d.tar.gz" \
+    && mkdir /tmp/cassandra \
+    && tar xfz /tmp/cassandra.tar.gz --strip 1 -C /tmp/cassandra \
     && rm -r /tmp/cassandra.tar.gz \
-    && mv php-driver-1.3.2/ext /usr/src/php/ext/cassandra \
-    && rm -rf php-driver-1.3.2 \
+    && curl -L "https://github.com/datastax/php-driver/pull/135.patch" | patch -p1 -d /tmp/cassandra -i - \
+    && mv /tmp/cassandra/ext /usr/src/php/ext/cassandra \
+    && rm -rf /tmp/cassandra \
     && docker-php-ext-install cassandra \
     && docker-php-source delete
 
@@ -131,6 +150,8 @@ else
     && docker-php-ext-enable amqp redis mongodb apcu memcached imagick
 fi
 
+pear install PHP_CodeSniffer
+
 { \
     echo 'opcache.enable=1'; \
     echo 'opcache.revalidate_freq=0'; \
@@ -154,6 +175,7 @@ fi
     echo 'apc.stat=1'; \
 } > /usr/local/etc/php/conf.d/apcu-recommended.ini
 
-echo "memory_limit=1024M" > /usr/local/etc/php/conf.d/zz-conf.ini
+echo 'memory_limit=1024M' > /usr/local/etc/php/conf.d/zz-conf.ini
+echo 'xdebug.coverage_enable=1' > /usr/local/etc/php/conf.d/20-xdebug.ini
 
 apt-get purge -yqq --auto-remove $buildDeps

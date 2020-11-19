@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-set -euf -o pipefail
+set -euo pipefail
 
 # NODE JS
-curl -sL https://deb.nodesource.com/setup_12.x | bash - \
-    && DEBIAN_FRONTEND=noninteractive apt-get install nodejs -yqq \
-    && npm i -g npm \
+curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    && DEBIAN_FRONTEND=noninteractive apt-get install nodejs -yq \
+    && npm i -g --force npm \
     && curl -o- -L https://yarnpkg.com/install.sh | bash \
     && npm cache clean --force
 
