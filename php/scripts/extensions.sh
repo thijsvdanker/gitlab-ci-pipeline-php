@@ -13,8 +13,6 @@ export extensions=" \
   opcache \
   pcntl \
   pdo_mysql \
-  pdo_sqlsrv \
-  sqlsrv \
   soap \
   xmlrpc \
   xsl \
@@ -140,8 +138,8 @@ elif [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" ]]; then
     && docker-php-source delete
 
   pecl channel-update pecl.php.net \
-    && pecl install amqp redis apcu mongodb imagick \
-    && docker-php-ext-enable amqp redis apcu mongodb imagick
+    && pecl install amqp redis apcu mongodb imagick sqlsrv pdo_sqlsrv \
+    && docker-php-ext-enable amqp redis apcu mongodb imagick sqlsrv pdo_sqlsrv
 
 else
   apt-get update && docker-php-ext-install -j$(nproc) mcrypt
