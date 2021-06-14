@@ -13,8 +13,8 @@ export extensions=" \
   opcache \
   pcntl \
   pdo_mysql \
-  pdo_pgsql \
-  pgsql \
+  pdo_sqlsrv \
+  sqlsrv \
   soap \
   xmlrpc \
   xsl \
