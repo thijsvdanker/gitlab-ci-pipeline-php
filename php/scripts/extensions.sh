@@ -85,8 +85,7 @@ if [[ $PHP_VERSION == "8.0" || $PHP_VERSION == "7.4" ]]; then
     && docker-php-ext-install -j$(nproc) ldap \
     && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j$(nproc) imap \
-    && docker-php-source delete \
-    && pear install PHP_CodeSniffer
+    && docker-php-source delete
 else
   docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
@@ -120,8 +119,8 @@ if ! [[ $PHP_VERSION == "8.0" ]]; then
     && docker-php-source delete
 
   pecl channel-update pecl.php.net \
-    && pecl install redis apcu mongodb sqlsrv pdo_sqlsrv \
-    && docker-php-ext-enable redis apcu mongodb sqlsrv pdo_sqlsrv
+    && pecl install redis apcu mongodb xdebug \
+    && docker-php-ext-enable redis apcu mongodb xdebug
 
   #AMQP
   docker-php-source extract \
@@ -178,8 +177,8 @@ else
     && docker-php-source delete
 
   pecl channel-update pecl.php.net \
-    && pecl install amqp redis apcu mongodb imagick sqlsrv pdo_sqlsrv \
-    && docker-php-ext-enable amqp redis apcu mongodb imagick sqlsrv pdo_sqlsrv
+    && pecl install amqp redis apcu mongodb imagick xdebug \
+    && docker-php-ext-enable amqp redis apcu mongodb imagick xdebug
 fi
 
 { \
