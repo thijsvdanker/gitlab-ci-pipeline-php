@@ -14,12 +14,11 @@ export extensions=" \
   pcntl \
   pdo_mysql \
   soap \
-  xmlrpc \
   xsl \
   zip
   "
 
-if [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
+if [[ $PHP_VERSION == "8.0" || $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" || $PHP_VERSION == "7.2" ]]; then
 
 export buildDeps=" \
     default-libmysqlclient-dev \
@@ -87,7 +86,7 @@ apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && docker-php-ext-install -j$(nproc) $extensions
 
-if [[ $PHP_VERSION == "7.4" ]]; then
+if [[ $PHP_VERSION == "8.0" || $PHP_VERSION == "7.4" ]]; then
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -130,7 +129,7 @@ if [[ $PHP_VERSION == "7.2" ]]; then
     && pecl install amqp redis apcu mongodb imagick sqlsrv pdo_sqlsrv \
     && docker-php-ext-enable amqp redis apcu mongodb imagick sqlsrv pdo_sqlsrv
 
-elif [[ $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" ]]; then
+elif [[ $PHP_VERSION == "8.0" || $PHP_VERSION == "7.4" || $PHP_VERSION == "7.3" ]]; then
   docker-php-source extract \
     && git clone https://github.com/php-memcached-dev/php-memcached /usr/src/php/ext/memcached/ \
     && docker-php-ext-install memcached \
