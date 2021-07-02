@@ -29,8 +29,6 @@ export DEBIAN_FRONTEND=noninteractive
       gnupg2 \
       jq \
       libc-client-dev \
-      mariadb-client \
-      mongo-tools \
       openssh-client \
       procps \
       python \
