@@ -41,9 +41,9 @@ export DEBIAN_FRONTEND=noninteractive
       zlib1g-dev \
       libgtk2.0-0 libgtk-3-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
       && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-      && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+      && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
       && apt-get update \
-      && ACCEPT_EULA=Y apt-get install -y msodbcsql18
+      && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
       && apt-get install -yq \
       unixodbc-dev \
       && rm -rf /var/lib/apt/lists/*

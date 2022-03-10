@@ -41,7 +41,6 @@ export runtimeDeps=" \
     libxml2-dev \
     libxslt1-dev \
     libzip-dev \
-    multiarch-support \
     "
 
 apt-get update \
@@ -65,7 +64,10 @@ docker-php-source extract \
   && docker-php-source delete
 
 pecl channel-update pecl.php.net \
-  && pecl install redis && pecl install imagick && pecl install sqlsrv && pecl install pdo_sqlsrv \
+  && pecl install redis \
+  && pecl install imagick \
+  && pecl install sqlsrv \
+  && pecl install pdo_sqlsrv \
   && docker-php-ext-enable redis imagick sqlsrv pdo_sqlsrv
 
 pear install PHP_CodeSniffer
