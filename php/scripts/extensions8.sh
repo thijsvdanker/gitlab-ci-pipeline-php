@@ -65,7 +65,7 @@ docker-php-source extract \
   && docker-php-source delete
 
 pecl channel-update pecl.php.net \
-  && pecl install redis imagick sqlsrv pdo_sqlsrv \
+  && pecl install redis && pecl install imagick && pecl install sqlsrv && pecl install pdo_sqlsrv \
   && docker-php-ext-enable redis imagick sqlsrv pdo_sqlsrv
 
 pear install PHP_CodeSniffer
