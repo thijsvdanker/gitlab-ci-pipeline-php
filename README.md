@@ -11,34 +11,9 @@
 
 ## Based on [Gitlab CI Pipeline by Eduardo Bizarro](https://github.com/edbizarro/gitlab-ci-pipeline-php)
 
-> PHP 7.4 available
-
-- ```7.4```, ```7```, ```latest``` [(7.4/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.4/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.4.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.4 "Get your own image badge on microbadger.com")
-
-- ```7.4-alpine```, ```alpine``` [(7.4/alpine/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.4/alpine/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.4-alpine.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.4-alpine "Get your own image badge on microbadger.com")
-
-
-- ```7.4-fpm```, ```fpm``` [(7.4/fpm/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.4/fpm/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.4-fpm.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.4-fpm "Get your own image badge on microbadger.com")
-
-- ```7.3``` [(7.3/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.3/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.3.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.3 "Get your own image badge on microbadger.com")
-
-- ```7.3-alpine``` [(7.3/alpine/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.3/alpine/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.3-alpine.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.3-alpine "Get your own image badge on microbadger.com")
-
-- ```7.3-alpine-lts```, ```alpine-lts``` [(7.3/alpine/Dockerfile-lts)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.3/alpine/Dockerfile-lts) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.3-alpine-lts.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.3-alpine-lts "Get your own image badge on microbadger.com")
-
-- ```7.3-fpm``` [(7.3/fpm/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.3/fpm/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.3-fpm.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.3-fpm "Get your own image badge on microbadger.com")
-
-- ```7.2``` [(7.2/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.2/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.2.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.2 "Get your own image badge on microbadger.com")
-
-- ```7.2-alpine``` [(7.2/alpine/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.2/alpine/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.2-alpine.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.2-alpine "Get your own image badge on microbadger.com")
-
-- ```7.2-alpine-lts``` [(7.2/alpine/Dockerfile-lts)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.2/alpine/Dockerfile-lts) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.2-alpine-lts.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.2-alpine-lts "Get your own image badge on microbadger.com")
-
-- ```7.2-fpm``` [(7.2/fpm/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.2/fpm/Dockerfile) - [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.2-fpm.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.2-fpm "Get your own image badge on microbadger.com")
 
 All versions come with [Node 14](https://nodejs.org/en/), [Composer](https://getcomposer.org/) and [Yarn](https://yarnpkg.com)
 
-> PHP 7.0.x and 7.1.x are now deprecated and removed from this repo since they reach end of life. Your scripts will not stop working since the images are still available but they will not be receiving new builds from now on. For more information please visit https://www.php.net/supported-versions.php
 
 ---
 
@@ -51,10 +26,6 @@ Everything you need to test Laravel projects :D
 ### Laravel Dusk
 
 To run Dusk tests we need chromium installed on the image, because of that we have a special tag for this case.
-
-- ```7.4-chromium``` [(7.4/chromium/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.4/chromium/Dockerfile) [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.4-chromium.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.4-chromium "Get your own image badge on microbadger.com")
-- ```7.3-chromium``` [(7.3/chromium/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.3/chromium/Dockerfile) [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.3-chromium.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.3-chromium "Get your own image badge on microbadger.com")
-- ```7.2-chromium``` [(7.2/chromium/Dockerfile)](https://github.com/edbizarro/gitlab-ci-pipeline-php/blob/master/php/7.2/chromium/Dockerfile) [![](https://images.microbadger.com/badges/image/edbizarro/gitlab-ci-pipeline-php:7.2-chromium.svg)](https://microbadger.com/images/edbizarro/gitlab-ci-pipeline-php:7.2-chromium "Get your own image badge on microbadger.com")
 
 Check *Dusk example* for more details.
 
@@ -79,7 +50,7 @@ test:
   stage: test
   services:
     - mysql:5.7
-  image: edbizarro/gitlab-ci-pipeline-php:7.4-alpine
+  image: thijsvandenanker/gitlab-ci-pipeline-php:8.2
   script:
     - yarn install --pure-lockfile
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress
