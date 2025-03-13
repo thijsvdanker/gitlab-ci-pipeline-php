@@ -1,10 +1,10 @@
-FROM php:8.2
+FROM php:8.3
 
 ARG BUILD_DATE
 ARG VCS_REF
 
 LABEL maintainer="Thijs van den Anker <tvandenanker@adysco.nl>" \
-  PHP="8.2" \
+  PHP="8.3" \
   NODE="14" \
   org.label-schema.name="edbizarro/gitlab-ci-pipeline-php" \
   org.label-schema.description=":coffee: Docker images for build and test PHP applications with Gitlab CI (or any other CI plataform!)" \
@@ -19,7 +19,7 @@ ENV HOME=/home/$IMAGE_USER
 ENV COMPOSER_HOME=$HOME/.composer
 ENV PATH=$HOME/.yarn/bin:$PATH
 ENV GOSS_VERSION="0.3.16"
-ENV PHP_VERSION=8.2
+ENV PHP_VERSION=8.3
 
 USER root
 
