@@ -18,7 +18,7 @@ export extensions=" \
   zip
   "
 
-if [[ $PHP_VERSION == "8.2" || $PHP_VERSION == "8.1"]]; then
+if [[ $PHP_VERSION == "8.3" || $PHP_VERSION == "8.2" || $PHP_VERSION == "8.1"]]; then
 
   export buildDeps=" \
     default-libmysqlclient-dev \
@@ -86,7 +86,7 @@ apt-get update &&
   rm -rf /var/lib/apt/lists/* &&
   docker-php-ext-install -j$(nproc) $extensions
 
-if [[ $PHP_VERSION == "8.2" || $PHP_VERSION == "8.1"]]; then
+if [[ $PHP_VERSION == "8.3" || $PHP_VERSION == "8.2" || $PHP_VERSION == "8.1"]]; then
   docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp &&
     docker-php-ext-install -j$(nproc) gd &&
     docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ &&
@@ -119,7 +119,7 @@ docker-php-source extract &&
   docker-php-ext-install cassandra &&
   docker-php-source delete
 
-if [[ $PHP_VERSION == "8.2" || $PHP_VERSION == "8.1" ]]; then
+if [[ $PHP_VERSION == "8.3" || $PHP_VERSION == "8.2" || $PHP_VERSION == "8.1" ]]; then
   docker-php-source extract &&
     git clone https://github.com/php-memcached-dev/php-memcached /usr/src/php/ext/memcached/ &&
     docker-php-ext-install memcached &&
